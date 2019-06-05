@@ -24,7 +24,6 @@ export default class Auth {
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.getAccessToken = this.getAccessToken.bind(this);
     this.getIdToken = this.getIdToken.bind(this);
-    this.renewSession = this.renewSession.bind(this);
   }
 
   login() {
@@ -36,29 +35,20 @@ export default class Auth {
     axios.post(`https://${AUTH_CONFIG.domain}/oauth/token`, {
       grant_type: 'authorization_code',
       client_id: AUTH_CONFIG.clientID,
-      client_secret: '',
+      client_secret: 'YnO6DAu4b8YH8xb0oZG9P99CWvIO9_lD83pXUhATs2Z8Ie_v0MSAZya4-BuVartS',
       code: code,
       redirect_uri: 'http://localhost:3000/callback',
     }).then(res => {
+      const expiresAt = JSON.stringify((res.data.expires_in * 1000) + new Date().getTime());
 
-      const expiresAt = JSON.stringify((res.data.expiresIn * 1000) + new Date().getTime());
-
+      localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('refreshToken', res.data.refresh_token);
       localStorage.setItem('expiresAt', expiresAt);
+      localStorage.setItem('accessToken', res.data.access_token);
+
+      history.replace('/home');
 
     });
-
-
-    // this.auth0.parseHash((err, authResult) => {
-    //   console.log('aR', authResult);
-    //   if (authResult && authResult.accessToken && authResult.idToken) {
-    //     this.setSession(authResult);
-    //   } else if (err) {
-    //     history.replace('/home');
-    //     console.log(err);
-    //     alert(`Error: ${err.error}. Check the console for further details.`);
-    //   }
-    // });
   }
 
   getAccessToken() {
@@ -67,38 +57,6 @@ export default class Auth {
 
   getIdToken() {
     return this.idToken;
-  }
-
-  setSession(authResult) {
-
-    // Set isLoggedIn flag in localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-
-    console.log('aR', authResult);
-
-    localStorage.setItem('idToken', authResult.idToken);
-    localStorage.setItem('accessToken', authResult.accessToken);
-
-    // Set the time that the access token will expire at
-    let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
-    this.accessToken = authResult.accessToken;
-    this.idToken = authResult.idToken;
-    this.expiresAt = expiresAt;
-
-    // navigate to the home route
-    history.replace('/home');
-  }
-
-  renewSession() {
-    this.auth0.checkSession({}, (err, authResult) => {
-       if (authResult && authResult.accessToken && authResult.idToken) {
-         this.setSession(authResult);
-       } else if (err) {
-         this.logout();
-         console.log(err);
-         alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
-       }
-    });
   }
 
   logout() {
@@ -121,7 +79,8 @@ export default class Auth {
   isAuthenticated() {
     // Check whether the current time is past the
     // access token's expiry time
-    let expiresAt = this.expiresAt;
-    return new Date().getTime() < expiresAt;
+    // let expiresAt = this.expiresAt;
+    // return new Date().getTime() < expiresAt;
+    return localStorage.getItem('isLoggedIn');
   }
 }
