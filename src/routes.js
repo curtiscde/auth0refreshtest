@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Router } from 'react-router-dom';
+import queryString from 'query-string'
 import App from './App';
 import Home from './Home/Home';
 import Callback from './Callback/Callback';
@@ -9,9 +10,7 @@ import history from './history';
 const auth = new Auth();
 
 const handleAuthentication = ({location}) => {
-  if (/access_token|id_token|error/.test(location.hash)) {
-    auth.handleAuthentication();
-  }
+  auth.handleAuthentication(queryString.parse(location.search).code);
 }
 
 export const makeMainRoutes = () => {

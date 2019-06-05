@@ -1,5 +1,6 @@
 import history from '../history';
 import auth0 from 'auth0-js';
+import axios from 'axios';
 import { AUTH_CONFIG } from './auth0-variables';
 
 export default class Auth {
@@ -11,8 +12,8 @@ export default class Auth {
     domain: AUTH_CONFIG.domain,
     clientID: AUTH_CONFIG.clientID,
     redirectUri: AUTH_CONFIG.callbackUrl,
-    responseType: 'token id_token',
-    scope: 'openid',
+    responseType: 'code',
+    scope: 'openid offline_access',
     audience: AUTH_CONFIG.audience,
   });
 
@@ -30,16 +31,34 @@ export default class Auth {
     this.auth0.authorize();
   }
 
-  handleAuthentication() {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-      } else if (err) {
-        history.replace('/home');
-        console.log(err);
-        alert(`Error: ${err.error}. Check the console for further details.`);
-      }
+  handleAuthentication(code) {
+
+    axios.post(`https://${AUTH_CONFIG.domain}/oauth/token`, {
+      grant_type: 'authorization_code',
+      client_id: AUTH_CONFIG.clientID,
+      client_secret: '',
+      code: code,
+      redirect_uri: 'http://localhost:3000/callback',
+    }).then(res => {
+
+      const expiresAt = JSON.stringify((res.data.expiresIn * 1000) + new Date().getTime());
+
+      localStorage.setItem('refreshToken', res.data.refresh_token);
+      localStorage.setItem('expiresAt', expiresAt);
+
     });
+
+
+    // this.auth0.parseHash((err, authResult) => {
+    //   console.log('aR', authResult);
+    //   if (authResult && authResult.accessToken && authResult.idToken) {
+    //     this.setSession(authResult);
+    //   } else if (err) {
+    //     history.replace('/home');
+    //     console.log(err);
+    //     alert(`Error: ${err.error}. Check the console for further details.`);
+    //   }
+    // });
   }
 
   getAccessToken() {
@@ -54,6 +73,8 @@ export default class Auth {
 
     // Set isLoggedIn flag in localStorage
     localStorage.setItem('isLoggedIn', 'true');
+
+    console.log('aR', authResult);
 
     localStorage.setItem('idToken', authResult.idToken);
     localStorage.setItem('accessToken', authResult.accessToken);
