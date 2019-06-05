@@ -1,15 +1,15 @@
 const dev = {
-  domain: 'ruletest.eu.auth0.com',
-  clientID: '06ODevrf60QH8cYZ9ve6DkoboNIwcmBE',
+  domain: 'pirefreshtest.eu.auth0.com',
+  clientID: 'rwQDKKkc0qK2ukr953I3jgxAM4HcZTht',
   callbackUrl: 'http://localhost:3000/callback',
-  audience: 'https://ruletest.com',
+  audience: 'https://refreshtest.com',
 }
 
 const prod = {
-  domain: 'ruletest.eu.auth0.com',
-  clientID: '06ODevrf60QH8cYZ9ve6DkoboNIwcmBE',
-  callbackUrl: 'https://auth0rulestest.netlify.com/callback',
-  audience: 'https://ruletest.com',
+  domain: 'pirefreshtest.eu.auth0.com',
+  clientID: 'rwQDKKkc0qK2ukr953I3jgxAM4HcZTht',
+  callbackUrl: 'https://auth0refreshtest.netlify.com/callback',
+  audience: 'https://refreshtest.com',
 }
 
 export const AUTH_CONFIG = process.env.REACT_APP_STAGE === 'production'
