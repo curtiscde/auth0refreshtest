@@ -31,7 +31,7 @@ export default class Auth {
       client_id: AUTH_CONFIG.clientID,
       // client_secret: AUTH_CLIENT_SECRET,
       code: code,
-      redirect_uri: 'http://localhost:3000/callback',
+      redirect_uri: AUTH_CONFIG.callbackUrl,
     }).then(res => {
       const expiresAt = JSON.stringify((res.data.expires_in * 1000) + new Date().getTime());
 
