@@ -58,30 +58,31 @@ export default class Auth {
   }
 
   isAuthenticated() {
-    // Check whether the current time is past the
-    // access token's expiry time
-    // let expiresAt = this.expiresAt;
-    // return new Date().getTime() < expiresAt;
     return localStorage.getItem('isLoggedIn');
   }
 
   refreshAccessToken() {
 
-    axios.post(`https://${AUTH_CONFIG.domain}/oauth/token`, {
-      grant_type: 'refresh_token',
-      client_id: AUTH_CONFIG.clientID,
-      // client_secret: AUTH_CLIENT_SECRET,
-      refresh_token: localStorage.getItem('refreshToken')
-    }).then(res => {
-      console.log('Refresh attempt successful');
+    return new Promise((resolve, reject) => {
+      axios.post(`https://${AUTH_CONFIG.domain}/oauth/token`, {
+        grant_type: 'refresh_token',
+        client_id: AUTH_CONFIG.clientID,
+        refresh_token: localStorage.getItem('refreshToken')
+      }).then(res => {
+        console.log('Refresh attempt successful');
+  
+        const expiresAt = JSON.stringify((res.data.expires_in * 1000) + new Date().getTime());
+  
+        localStorage.setItem('expiresAt', expiresAt);
+        localStorage.setItem('accessToken', res.data.access_token);
+  
+        console.log('New expiry = ', new Date(parseInt(expiresAt,10)));
 
-      const expiresAt = JSON.stringify((res.data.expires_in * 1000) + new Date().getTime());
-
-      localStorage.setItem('expiresAt', expiresAt);
-      localStorage.setItem('accessToken', res.data.access_token);
-
-      console.log('New expiry = ', new Date(parseInt(expiresAt,10)));
+        resolve();
+      });
+  
     });
 
   }
+
 }

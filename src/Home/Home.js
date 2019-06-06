@@ -7,6 +7,7 @@ class Home extends Component {
   }
 
   callApi(){
+    console.log('Call API Request made');
 
     const expiresAt = parseInt(localStorage.getItem('expiresAt'), 10);
     const now = new Date().getTime();
@@ -18,22 +19,23 @@ class Home extends Component {
     console.log('Token Expired = ', tokenExpired);
 
     if (!tokenExpired){
-
       console.log('Token seconds left = ', (expiresAt - now)/1000);
-
-      console.log('Make API Call with Access Token...');
-      console.log(localStorage.getItem('accessToken'));
+      this.apiRequest();
     }
     else {
       console.log('Token expired so attempt refresh');
 
-      this.props.auth.refreshAccessToken()
-
-      
+      this.props.auth.refreshAccessToken().then(() => {
+        this.apiRequest();
+      });
 
     }
-
     
+  }
+
+  apiRequest() {
+    console.log('Make API Call with Access Token...');
+    console.log(localStorage.getItem('accessToken'));
   }
 
 
