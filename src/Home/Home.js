@@ -1,18 +1,55 @@
 import React, { Component } from 'react';
+import { Button } from 'react-bootstrap';
 
 class Home extends Component {
   login() {
     this.props.auth.login();
   }
+
+  callApi(){
+
+    const expiresAt = parseInt(localStorage.getItem('expiresAt'), 10);
+    const now = new Date().getTime();
+
+    console.log('Check Access Token expiry - ', new Date(expiresAt));
+    
+    const tokenExpired = now > expiresAt;
+
+    console.log('Token Expired = ', tokenExpired);
+
+    if (!tokenExpired){
+
+      console.log('Token seconds left = ', (expiresAt - now)/1000);
+
+      console.log('Make API Call with Access Token...');
+      console.log(localStorage.getItem('accessToken'));
+    }
+    else {
+      console.log('Token expired so attempt refresh');
+
+      this.props.auth.refreshAccessToken()
+
+      
+
+    }
+
+    
+  }
+
+
+
   render() {
     const { isAuthenticated } = this.props.auth;
     return (
       <div className="container">
         {
           isAuthenticated() && (
-              <h4>
-                You are logged in!
-              </h4>
+              <div>
+                <h4>
+                  You are logged in!
+                </h4>
+                <Button onClick={this.callApi.bind(this)}>Call API</Button>
+              </div>
             )
         }
         {
