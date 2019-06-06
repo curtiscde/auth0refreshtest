@@ -8,7 +8,7 @@ const dev = {
 const prod = {
   domain: 'pirefreshtest.eu.auth0.com',
   clientID: 'rwQDKKkc0qK2ukr953I3jgxAM4HcZTht',
-  callbackUrl: 'https://auth0refreshtest.netlify.com/callback',
+  callbackUrl: 'https://pi-auth0-refresh-test.netlify.com/callback',
   audience: 'https://refreshtest.com',
 }
 
