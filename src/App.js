@@ -15,14 +15,6 @@ class App extends Component {
     this.props.auth.logout();
   }
 
-  componentDidMount() {
-    const { renewSession } = this.props.auth;
-
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-      renewSession();
-    }
-  }
-
   render() {
     const { isAuthenticated } = this.props.auth;
 
@@ -31,7 +23,7 @@ class App extends Component {
         <Navbar fluid>
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="#">Auth0 - React</a>
+              <a href="#">Auth0 - React - PI Refresh Test</a>
             </Navbar.Brand>
             <Button
               bsStyle="primary"
